@@ -1,33 +1,26 @@
-from textnode import *
-from htmlnode import *
-from inline_markdown import *
+import os
+import shutil
+
+from copystatic import copy_files_recursive
+from generate_pages import generate_pages_recursive
+
+
+dir_path_static = "./static"
+dir_path_public = "./public"
+content_from_path = "./content/"
+content_to_path = "./public/"
+template_path = "template.html"
+
 
 def main():
+    print("Deleting public directory...")
+    if os.path.exists(dir_path_public):
+        shutil.rmtree(dir_path_public)
 
-    testNode = TextNode("This is a text node", TextType.BOLD, "http://testurl.com")
-    #print(testNode)
+    print("Copying static files to public directory...")
+    copy_files_recursive(dir_path_static, dir_path_public)
 
-    tag = "h1"
-    value = "this is header text"
-    props = {"href": "https://www.google.com", "target": "_blank"}
+    generate_pages_recursive(content_from_path, template_path, content_to_path)
 
-    test_html_node = HTMLNode(tag, value, children=None, props= props)
-    #print(test_html_node)
 
-    test_leaf_node = LeafNode(tag, value, props= props)
-    #print(test_leaf_node.to_html())
-
-    tag_parent = "p"
-    children_parent = [test_leaf_node, test_leaf_node]
-    props_parent = {"href": "https://www.parent.com"}
-
-    test_parent_node = ParentNode(tag_parent, children_parent, props_parent)
-    #print(test_parent_node.to_html())
-
-    text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
-    print(extract_markdown_images(text))
-
-    text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
-    print(extract_markdown_links(text))
-    
 main()
